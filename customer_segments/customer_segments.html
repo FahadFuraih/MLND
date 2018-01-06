@@ -18002,7 +18002,7 @@ Outliers indicices are
 </li>
 <li><p>At this stage, it is not yet clear if outliers are truly outliers or if they happen to be the samples for either a small marketplace or a huge hypermarket.</p>
 </li>
-<li><p>Outliers for more than one feature have been removed. This is to avoid overfitting the model by those far away data points.</p>
+<li><p>Outliers for more than one feature have been removed. This is to avoid overfitting the model by those far away data points. Having outliers will not make the respective cluster's centroid representative cluster's data points.</p>
 </li>
 </ul>
 
@@ -18396,13 +18396,15 @@ NKsAAAAASUVORK5CYII=
 </li>
 <li><p>Explained variance by the first four components = 443 + 0.2638 + 0.1231 + 0.1012 = 0.9311</p>
 </li>
-<li><p>The first principle component has the highest variance explained value (0.443) and it represents the high correlation between features 'Milk', 'Grocery' and 'Detergents_Paper'. This suggests that this component is likely to represent supermarkets.</p>
+<li><p>The first principle component has the highest variance explained value (0.443) and it represents the high correlation between features 'Milk', 'Grocery' and 'Detergents_Paper'. This suggests that this component is important in representing supermarkets.</p>
 </li>
-<li><p>The second principle component represents very well the other three features 'Fresh', 'Frozen' and 'Delicatessen' with an explained variance of 0.2638. This component better represents restaurant-type customers.</p>
+<li><p>The second principle component represents very well the other three features 'Fresh', 'Frozen' and 'Delicatessen' with an explained variance of 0.2638. This component is essential in representing restaurant-type customers.</p>
 </li>
-<li><p>The third principle component has a variance explained of 0.1231 and it represents the correlations between 'Fresh', 'Frozen', 'Delicatessen' and 'Detergents_Paper'.</p>
+<li><p>The third principle component has a variance explained of 0.1231 and it represents the correlations between 'Fresh', 'Frozen', 'Delicatessen' and 'Detergents_Paper'. Fresh and Delicatessen have opposite signs that will help in seperating customers compared to customers in which both features are of the same sign.</p>
 </li>
-<li><p>The fourth principle component has an explained variance of 0.1012 and represents the correlations between 'Frozen' and 'Delicatessen' features.</p>
+<li><p>The fourth principle component has an explained variance of 0.1012 and represents the correlations between 'Frozen' and 'Delicatessen' features. Frozen and Delicatessen have opposite signs that will help in seperating customers compared to customers in which both features are of the same sign.</p>
+</li>
+<li><p>It is noted that with different runs, signs of Features Weights can flip while conserving the weight magnitude.</p>
 </li>
 </ul>
 
@@ -18628,7 +18630,7 @@ NKsAAAAASUVORK5CYII=
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x118d03650&gt;</pre>
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x110229890&gt;</pre>
 </div>
 
 </div>
@@ -20634,7 +20636,7 @@ TkSuQmCC
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
 <ul>
-<li><p>Segment 0 spendings are below average for all products. However, its spengins for 'Fresh' and 'Frozen' is significantly higher compared with Segment 1. This suggests that Segment 1 is more likely to be a restaurant-type customer.</p>
+<li><p>Segment 0 spendings are below average for all products. However, its spengins for 'Fresh' and 'Frozen' is significantly higher compared with Segment 1. This suggests that Segment 0 is more likely to be a restaurant-type customer.</p>
 </li>
 <li><p>Segment 1 spendings are above average for 'Milk', 'Grocery' and 'Detergants_Paper'. This may indicate that this is most likely a supermarket-type of establishment.</p>
 </li>
@@ -20662,11 +20664,46 @@ TkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># To measure distance between sample points and clusters centroids.</span>
+<span class="n">clusters_centers</span> <span class="o">=</span> <span class="n">clusterer</span><span class="o">.</span><span class="n">cluster_centers_</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s2">&quot;Distance from centroid &quot;</span><span class="p">,</span><span class="n">j</span><span class="p">,</span> <span class="s2">&quot;to sample point &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;= &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">clusters_centers</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">pca_samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>    <span class="o">+</span> <span class="p">(</span><span class="n">clusters_centers</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">pca_samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>        <span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Distance from centroid  0 to sample point  0 =  2.0429763862
+Distance from centroid  1 to sample point  0 =  4.02515253978
+Distance from centroid  0 to sample point  1 =  4.48864019015
+Distance from centroid  1 to sample point  1 =  0.96910355626
+Distance from centroid  0 to sample point  2 =  8.1438293063
+Distance from centroid  1 to sample point  2 =  7.15967955876
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Display the predictions</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_preds</span><span class="p">):</span>
     <span class="k">print</span> <span class="s2">&quot;Sample point&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;predicted to be in Cluster&quot;</span><span class="p">,</span> <span class="n">pred</span>
-
-<span class="n">display</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -20686,57 +20723,6 @@ Sample point 2 predicted to be in Cluster 1
 </div>
 </div>
 
-<div class="output_area"><div class="prompt"></div>
-
-<div class="output_html rendered_html output_subarea ">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Fresh</th>
-      <th>Milk</th>
-      <th>Grocery</th>
-      <th>Frozen</th>
-      <th>Detergents_Paper</th>
-      <th>Delicatessen</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>19046</td>
-      <td>2770</td>
-      <td>2469</td>
-      <td>8853</td>
-      <td>483</td>
-      <td>2708</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3067</td>
-      <td>13240</td>
-      <td>23127</td>
-      <td>3941</td>
-      <td>9959</td>
-      <td>731</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>9</td>
-      <td>1534</td>
-      <td>7417</td>
-      <td>175</td>
-      <td>3468</td>
-      <td>27</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -20748,9 +20734,9 @@ Sample point 2 predicted to be in Cluster 1
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
 <ul>
-<li><p>Sample 0 is clustred with segment 0, Samples 1 and 2 are classified with segment 1.</p>
+<li><p>Sample 0 is clustred with segment 0, Samples 1 and 2 are classified with segment 1. This can be seen from the distances measured between every sample point point and the two clusters' centroids. Data points with smaller distance to the a centroid will fall under its respective cluster.</p>
 </li>
-<li><p>Yes. This clustring is in line with what was predicted at the data exploration stage.</p>
+<li><p>Yes.  As elaborated in Question#8 answer, Segment 0 is more likely to be a restaurant-type customer while Segment 1 is likely to be a supermarket-type customer. The clustring is in line with what was predicted at the data exploration stage.</p>
 </li>
 </ul>
 
@@ -20797,7 +20783,8 @@ Sample point 2 predicted to be in Cluster 1
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
 <p>The change will not affect all customers equally. The wholesale distributor can expect customers relying mostly on Fresh products (Segment 0) to be unhappy with this change as they will not be able to sell truly fresh products.</p>
-<p>On the other hand, Segment 1 customers will not resist this change as the majority of what the buy can be stocked for longer durations.</p>
+<p>On the other hand, Segment 1 customers will not resist the change as the majority of what they buy can be stocked for longer durations.</p>
+<p>A\B test is implemented by dividing the two clustered data points into two different groups (expirement and control groups) with the same proportion on Segment 0 and Segment 1. Then, delivery frequency for the expirement group will be changed from 5-days a week to 3-days a week. Behaivour of customers at the expirement test is to be monitored closely to see if the change negatively affected the customer satisfaction.</p>
 
 </div>
 </div>
@@ -20840,7 +20827,7 @@ Sample point 2 predicted to be in Cluster 1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Display the clustering results based on &#39;Channel&#39; data</span>
